@@ -1,0 +1,110 @@
+.methodology {
+  padding: 100px 0;
+  background: #000;
+  position: relative;
+  color: white;
+}
+
+.methodology::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: #111;
+  clip-path: polygon(0 0, 100% 0, 100% 70%, 0 100%);
+}
+
+.methodology-content {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.methodology-intro {
+  font-size: 1.3rem;
+  line-height: 1.8;
+  margin-bottom: 3rem;
+  color: #ccc;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.methodology-points {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.methodology-point {
+  background: rgba(17, 17, 17, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid #333;
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: left;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.methodology-point:hover {
+  transform: translateY(-5px);
+  background: rgba(34, 34, 34, 0.9);
+  border-color: #00a8ff;
+}
+
+.point-icon {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 168, 255, 0.2);
+  border-radius: 50%;
+  text-align: center;
+  line-height: 40px;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #00a8ff;
+  font-weight: bold;
+}
+
+.point-text {
+  color: #ccc;
+  line-height: 1.6;
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Decorative background pattern */
+.methodology::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="methodology-pattern" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%2300a8ff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23methodology-pattern)"/></svg>');
+  opacity: 0.3;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .methodology {
+    padding: 60px 0;
+  }
+  
+  .methodology-points {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .methodology-point {
+    padding: 1.5rem;
+  }
+  
+  .methodology-intro {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+} 

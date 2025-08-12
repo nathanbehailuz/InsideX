@@ -1,0 +1,55 @@
+.disclaimer-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(10px);
+  border-top: 2px solid #00a8ff;
+  z-index: 1000;
+  padding: 1rem 0;
+  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+}
+
+.disclaimer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.disclaimer-text {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+  text-align: center;
+}
+
+.disclaimer-text strong {
+  color: #00a8ff;
+  font-weight: 600;
+}
+
+/* Add bottom padding to the last section to account for fixed disclaimer */
+.methodology {
+  padding-bottom: 120px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .disclaimer-banner {
+    padding: 0.8rem 0;
+  }
+  
+  .disclaimer-content {
+    padding: 0 15px;
+  }
+  
+  .disclaimer-text {
+    font-size: 0.8rem;
+  }
+  
+  .methodology {
+    padding-bottom: 100px;
+  }
+} 
