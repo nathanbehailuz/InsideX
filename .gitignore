@@ -1,0 +1,5 @@
+venv/
+insider_trading.db
+__pycache__/
+new.ipynb
+logs/
