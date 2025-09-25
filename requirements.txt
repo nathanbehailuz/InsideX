@@ -1,5 +1,22 @@
+# Scraping dependencies
 selenium==4.35.0
 requests==2.32.5
 beautifulsoup4==4.13.5
 pandas==2.3.2
 lxml==6.0.2
+
+# Backend API dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+python-multipart==0.0.6
+
+# ML dependencies
+scikit-learn>=1.5.0
+xgboost>=2.1.0
+joblib>=1.3.2
+numpy>=1.26.0
+
+# Development dependencies
+pytest==7.4.3
+httpx==0.25.2
