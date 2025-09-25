@@ -11,10 +11,8 @@ import argparse
 import logging
 import os
 
-
 URL = "http://openinsider.com"
 DB_PATH = 'insider_trading.db'
-
 
 warnings.filterwarnings("ignore")
 

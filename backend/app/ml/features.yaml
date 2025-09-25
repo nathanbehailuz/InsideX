@@ -1,0 +1,174 @@
+feature_specification:
+  version: "1.0"
+  description: "Feature specification for insider trading signal ML model"
+  
+  basic_features:
+    trade_value_usd:
+      type: "float"
+      description: "Trade value in USD (quantity * price)"
+      source: "calculated from qty and price"
+    
+    log_trade_value:
+      type: "float"
+      description: "Log-transformed trade value"
+      source: "log1p(trade_value_usd)"
+    
+    delta_own_ratio:
+      type: "float"  
+      description: "Change in ownership as ratio of total owned"
+      source: "delta_own / owned"
+    
+    is_buy:
+      type: "binary"
+      description: "Binary indicator for buy transactions"
+      source: "trade_type == 'Buy'"
+    
+    is_sell:
+      type: "binary"
+      description: "Binary indicator for sell transactions"
+      source: "trade_type == 'Sell'"
+
+  categorical_features:
+    flag_D:
+      type: "binary"
+      description: "Disposition flag present"
+      source: "trade_flag contains 'D'"
+    
+    flag_M:
+      type: "binary"
+      description: "Multiple transaction flag present"
+      source: "trade_flag contains 'M'"
+    
+    flag_A:
+      type: "binary"
+      description: "Acquisition flag present"
+      source: "trade_flag contains 'A'"
+    
+    flag_S:
+      type: "binary"
+      description: "Stock-based compensation flag present"
+      source: "trade_flag contains 'S'"
+
+  insider_role_features:
+    is_ceo:
+      type: "binary"
+      description: "Insider is CEO or President"
+      source: "title contains CEO/President patterns"
+    
+    is_cfo:
+      type: "binary"
+      description: "Insider is CFO or Treasurer"
+      source: "title contains CFO/Treasurer patterns"
+    
+    is_director:
+      type: "binary"
+      description: "Insider is a Director"
+      source: "title contains Director"
+    
+    is_owner:
+      type: "binary"
+      description: "Insider is 10% owner or similar"
+      source: "title contains Owner/10% patterns"
+
+  time_features:
+    filing_delay_days:
+      type: "int"
+      description: "Days between trade date and filing date"
+      source: "filing_date - trade_date"
+    
+    trade_day_of_week:
+      type: "int"
+      description: "Day of week for trade (0=Monday)"
+      source: "trade_date.dayofweek"
+    
+    trade_month:
+      type: "int"
+      description: "Month of trade (1-12)"
+      source: "trade_date.month"
+    
+    trade_quarter:
+      type: "int"
+      description: "Quarter of trade (1-4)"
+      source: "trade_date.quarter"
+
+  insider_aggregate_features:
+    insider_trade_value_usd_count:
+      type: "int"
+      description: "Number of trades by this insider"
+      source: "groupby(insider_name).count()"
+    
+    insider_trade_value_usd_mean:
+      type: "float"
+      description: "Average trade value for this insider"
+      source: "groupby(insider_name).mean(trade_value_usd)"
+    
+    insider_buy_ratio:
+      type: "float"
+      description: "Ratio of buy trades for this insider"
+      source: "buy_count / total_count by insider"
+    
+    insider_success_rate_1m:
+      type: "float"
+      description: "Historical success rate (1-month)"
+      source: "avg(performance_1m > 0) by insider"
+
+  company_aggregate_features:
+    company_trade_value_usd_count:
+      type: "int"
+      description: "Number of insider trades for this company"
+      source: "groupby(ticker).count()"
+    
+    company_trade_value_usd_mean:
+      type: "float"
+      description: "Average insider trade value for this company"
+      source: "groupby(ticker).mean(trade_value_usd)"
+    
+    company_buy_ratio:
+      type: "float"
+      description: "Ratio of buy trades for this company"
+      source: "buy_count / total_count by ticker"
+    
+    company_price_mean:
+      type: "float"
+      description: "Average trade price for this company"
+      source: "groupby(ticker).mean(price)"
+
+  market_features:
+    price_momentum_1m:
+      type: "float"
+      description: "1-month price performance"
+      source: "performance_1m field"
+    
+    price_momentum_6m:
+      type: "float"
+      description: "6-month price performance"
+      source: "performance_6m field"
+    
+    price_volatility:
+      type: "float"
+      description: "Price volatility proxy"
+      source: "std(performance_1m) by ticker"
+
+target_specification:
+  label_type: "binary"
+  label_name: "positive_return"
+  description: "Binary target: 1 if stock outperforms by threshold within horizon"
+  
+  parameters:
+    horizon_days: 20
+    threshold_pct: 5.0
+    performance_metric: "absolute_return"
+  
+  calculation: "performance > threshold_pct within horizon_days"
+
+model_configuration:
+  problem_type: "binary_classification"
+  evaluation_metrics: ["auc", "precision", "recall", "f1"]
+  
+  train_test_split:
+    method: "time_based"
+    train_ratio: 0.8
+    
+  cross_validation:
+    method: "time_series"
+    n_splits: 5
