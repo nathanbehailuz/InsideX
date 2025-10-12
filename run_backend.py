@@ -16,15 +16,15 @@ if __name__ == "__main__":
     from backend.app.main import app
     
     print("Starting InsideX FastAPI backend...")
-    print("API will be available at: http://localhost:8000")
-    print("Interactive docs at: http://localhost:8000/docs")
-    print("Health check at: http://localhost:8000/healthz")
+    print("API will be available at: http://localhost:8001")
+    print("Interactive docs at: http://localhost:8001/docs")
+    print("Health check at: http://localhost:8001/healthz")
     print("\nPress Ctrl+C to stop the server")
     
     uvicorn.run(
         "backend.app.main:app",
         host="0.0.0.0",
-        port=8000,
+        port=8001,
         reload=True,
         log_level="info"
     )

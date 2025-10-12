@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true, // Disable image optimization to avoid favicon issues
   },
+  // Disable favicon processing
+  experimental: {
+    optimizePackageImports: [],
+  },
 };
 
 export default nextConfig;
