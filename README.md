@@ -4,6 +4,8 @@
 
 OpenSignal is an AI platform that analyzes financial disclosures and transactions from influential decision-makers—including government officials and corporate executives—to identify market signals. The platform combines real-time data processing with machine learning to surface actionable trading insights.
 
+**Live app:** [https://open-signal-sec.vercel.app](https://open-signal-sec.vercel.app)
+
 **Key Features:**
 - 🧠 **AI-Powered Signals**: Machine learning models trained on historical insider trading data
 - 📊 **Real-time Analytics**: Live tracking of SEC Form 4 filings and insider activity
@@ -264,6 +266,10 @@ gunicorn -k uvicorn.workers.UvicornWorker app.main:app
 
 ## Deployment
 
+### Production
+- **Frontend (Vercel):** [https://open-signal-sec.vercel.app](https://open-signal-sec.vercel.app)
+- **API (Modal):** https://nathanbehailuz--insidex-api.modal.run
+
 ### Docker Support (Future)
 ```dockerfile
 # Example Dockerfile structure
@@ -275,10 +281,9 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
 ### Cloud Deployment Options
-- **Vercel**: Frontend deployment
-- **Railway/Render**: Backend API deployment
+- **Vercel**: Frontend deployment ([open-signal-sec.vercel.app](https://open-signal-sec.vercel.app))
+- **Modal**: Backend API + scrape/train jobs
 - **AWS/GCP/Azure**: Full infrastructure deployment
-
 ## Monitoring & Observability
 
 - Health checks at `/healthz`
