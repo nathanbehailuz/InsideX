@@ -113,8 +113,12 @@ data/
 *.json
 !package.json
 !package-lock.json
+!vercel.json
 !frontend/tsconfig.json
 !tsconfig.json
+!frontend/package.json
+!frontend/package-lock.json
+!frontend/tsconfig.json
 
 # Environment variables
 .env
