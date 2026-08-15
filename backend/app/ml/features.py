@@ -64,9 +64,18 @@ class FeatureEngineer:
             0
         )
         
-        # Trade type encoding
-        df['is_buy'] = (df['trade_type'] == 'Buy').astype(int)
-        df['is_sell'] = (df['trade_type'] == 'Sell').astype(int)
+        # Trade type encoding (OpenInsider: P - Purchase / S - Sale)
+        trade_type_l = df['trade_type'].fillna('').astype(str).str.strip().str.lower()
+        df['is_buy'] = (
+            trade_type_l.isin(['buy', 'p - purchase'])
+            | trade_type_l.str.startswith('p -')
+            | trade_type_l.str.contains('purchase', na=False)
+        ).astype(int)
+        df['is_sell'] = (
+            trade_type_l.isin(['sell', 's - sale'])
+            | trade_type_l.str.startswith('s -')
+            | trade_type_l.str.contains('sale', na=False)
+        ).astype(int)
         
         # Trade flag encoding (binary indicators)
         trade_flags = ['D', 'M', 'A', 'S']

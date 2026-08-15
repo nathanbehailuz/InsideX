@@ -1,8 +1,8 @@
-# InsideX - Insider Trading Signal Platform
+# OpenSignal
 
 ## Overview
 
-InsideX is an AI-powered platform that analyzes SEC insider trading filings to generate actionable trading signals. The platform combines real-time data processing with machine learning to identify potentially profitable insider trading patterns.
+OpenSignal is an AI platform that analyzes financial disclosures and transactions from influential decision-makers—including government officials and corporate executives—to identify market signals. The platform combines real-time data processing with machine learning to surface actionable trading insights.
 
 **Key Features:**
 - 🧠 **AI-Powered Signals**: Machine learning models trained on historical insider trading data

@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "InsideX - Insider Trading Signals",
-  description: "AI-powered insider trading signal detection and analysis platform",
+  title: "OpenSignal",
+  description:
+    "An AI platform that analyzes financial disclosures and transactions from influential decision-makers—including government officials and corporate executives—to identify market signals.",
 };
 
 export default function RootLayout({
@@ -13,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased bg-gray-50">
+      <body className="antialiased font-sans bg-background text-on-surface">
         {children}
       </body>
     </html>

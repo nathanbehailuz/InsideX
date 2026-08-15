@@ -1,5 +1,5 @@
 /**
- * Reusable Card component
+ * Card — Stitch surface style
  */
 
 import { ReactNode } from 'react';
@@ -13,26 +13,26 @@ interface CardProps {
   hover?: boolean;
 }
 
-export function Card({ 
-  children, 
-  className, 
+export function Card({
+  children,
+  className,
   padding = 'md',
   shadow = true,
-  hover = false 
+  hover = false,
 }: CardProps) {
   const paddingClasses = {
     none: '',
     sm: 'p-4',
     md: 'p-6',
-    lg: 'p-8'
+    lg: 'p-8',
   };
 
   return (
     <div
       className={cn(
-        'bg-white rounded-lg border border-gray-200',
-        shadow && 'shadow-sm',
-        hover && 'hover:shadow-md transition-shadow duration-200',
+        'bg-surface rounded-lg border border-border',
+        shadow && 'shadow-[0_2px_4px_rgba(0,0,0,0.04)]',
+        hover && 'hover:shadow-[0_8px_16px_rgba(0,0,0,0.08)] transition-shadow duration-200',
         paddingClasses[padding],
         className
       )}
@@ -42,41 +42,36 @@ export function Card({
   );
 }
 
-interface CardHeaderProps {
+export function CardHeader({
+  children,
+  className,
+}: {
   children: ReactNode;
   className?: string;
+}) {
+  return <div className={cn('mb-4', className)}>{children}</div>;
 }
 
-export function CardHeader({ children, className }: CardHeaderProps) {
-  return (
-    <div className={cn('mb-4', className)}>
-      {children}
-    </div>
-  );
-}
-
-interface CardTitleProps {
+export function CardTitle({
+  children,
+  className,
+}: {
   children: ReactNode;
   className?: string;
-}
-
-export function CardTitle({ children, className }: CardTitleProps) {
+}) {
   return (
-    <h3 className={cn('text-lg font-semibold text-gray-900', className)}>
+    <h3 className={cn('text-lg font-semibold text-on-surface', className)}>
       {children}
     </h3>
   );
 }
 
-interface CardContentProps {
+export function CardContent({
+  children,
+  className,
+}: {
   children: ReactNode;
   className?: string;
-}
-
-export function CardContent({ children, className }: CardContentProps) {
-  return (
-    <div className={cn('text-gray-600', className)}>
-      {children}
-    </div>
-  );
+}) {
+  return <div className={cn('text-on-surface-variant', className)}>{children}</div>;
 }

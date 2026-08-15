@@ -1,5 +1,5 @@
 /**
- * Reusable Badge component for signals and status indicators
+ * Badges — Stitch confidence / trade chips
  */
 
 import { ReactNode } from 'react';
@@ -12,31 +12,31 @@ interface BadgeProps {
   className?: string;
 }
 
-export function Badge({ 
-  children, 
+export function Badge({
+  children,
   variant = 'default',
   size = 'md',
-  className 
+  className,
 }: BadgeProps) {
   const variantClasses = {
-    default: 'bg-gray-100 text-gray-800',
-    success: 'bg-green-100 text-green-800',
-    warning: 'bg-yellow-100 text-yellow-800',
-    danger: 'bg-red-100 text-red-800',
-    info: 'bg-blue-100 text-blue-800',
-    outline: 'border border-gray-300 text-gray-700 bg-white'
+    default: 'bg-surface-container text-on-surface-variant',
+    success: 'bg-success/15 text-success',
+    warning: 'bg-warning/15 text-warning',
+    danger: 'bg-danger/15 text-danger',
+    info: 'bg-primary/10 text-primary',
+    outline: 'border border-border text-secondary bg-surface',
   };
 
   const sizeClasses = {
     sm: 'px-2 py-0.5 text-xs',
     md: 'px-2.5 py-1 text-sm',
-    lg: 'px-3 py-1.5 text-base'
+    lg: 'px-3 py-1.5 text-base',
   };
 
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full font-medium',
+        'inline-flex items-center rounded-full font-semibold tracking-wide',
         variantClasses[variant],
         sizeClasses[size],
         className
@@ -47,34 +47,41 @@ export function Badge({
   );
 }
 
-interface SignalBadgeProps {
+export function SignalBadge({
+  confidence,
+  score,
+  className,
+}: {
   confidence: 'low' | 'medium' | 'high';
   score?: number;
   className?: string;
-}
-
-export function SignalBadge({ confidence, score, className }: SignalBadgeProps) {
-  const variant = confidence === 'high' ? 'success' : 
-                 confidence === 'medium' ? 'warning' : 'danger';
+}) {
+  const variant =
+    confidence === 'high' ? 'success' : confidence === 'medium' ? 'warning' : 'default';
 
   return (
-    <Badge variant={variant} className={className}>
+    <Badge variant={variant} size="sm" className={className}>
       {confidence.toUpperCase()}
-      {score && ` (${Math.round(score * 100)}%)`}
+      {score != null && ` · ${Math.round(score * 100)}%`}
     </Badge>
   );
 }
 
-interface TradeBadgeProps {
-  tradeType: 'Buy' | 'Sell' | string;
+export function TradeBadge({
+  tradeType,
+  className,
+}: {
+  tradeType: string;
   className?: string;
-}
-
-export function TradeBadge({ tradeType, className }: TradeBadgeProps) {
-  const variant = tradeType?.toLowerCase() === 'buy' ? 'success' : 'danger';
+}) {
+  const normalized = tradeType?.toLowerCase() ?? '';
+  const isBuy =
+    normalized === 'buy' ||
+    normalized.startsWith('p -') ||
+    normalized.includes('purchase');
 
   return (
-    <Badge variant={variant} size="sm" className={className}>
+    <Badge variant={isBuy ? 'success' : 'danger'} size="sm" className={className}>
       {tradeType}
     </Badge>
   );

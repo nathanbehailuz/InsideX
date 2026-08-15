@@ -6,6 +6,7 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 
+from backend.app.core.config import settings
 from backend.app.core.deps import get_database
 from backend.app.models.signal import SignalRequest, SignalResponse, TopSignalsResponse, Signal
 from backend.app.services.signal_service import SignalService
@@ -25,7 +26,7 @@ async def get_top_signals(
     Uses ML model if available, otherwise falls back to heuristic scoring.
     """
     try:
-        signal_service = SignalService(db)
+        signal_service = SignalService(db, model_path=settings.ML_ARTIFACTS_DIR)
         result = await signal_service.generate_signals(window_days, limit)
         return result
         
@@ -43,7 +44,7 @@ async def score_signals(
     Uses ML model if available for accurate signal scoring.
     """
     try:
-        signal_service = SignalService(db)
+        signal_service = SignalService(db, model_path=settings.ML_ARTIFACTS_DIR)
         signals = []
         
         if request.ticker:
@@ -98,7 +99,7 @@ async def get_model_info(
     Get information about the loaded ML model.
     """
     try:
-        signal_service = SignalService(db)
+        signal_service = SignalService(db, model_path=settings.ML_ARTIFACTS_DIR)
         model_info = signal_service.get_model_info()
         return model_info
         

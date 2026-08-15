@@ -1,27 +1,111 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8f9fa;
+  --foreground: #191c1d;
+  --surface: #ffffff;
+  --primary: #003ec7;
+  --primary-container: #0052ff;
+  --on-primary: #ffffff;
+  --secondary: #575e70;
+  --on-surface: #191c1d;
+  --on-surface-variant: #434656;
+  --border: #e5e7eb;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --surface-container: #edeeef;
+  --surface-container-high: #e7e8e9;
+  --surface-bright: #f8f9fa;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-surface: var(--surface);
+  --color-primary: var(--primary);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary: var(--on-primary);
+  --color-secondary: var(--secondary);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-border: var(--border);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-bright: var(--surface-bright);
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
+.ambient-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(
+    circle,
+    rgba(0, 82, 255, 0.08) 0%,
+    rgba(248, 249, 250, 0) 70%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  top: -100px;
+  right: -100px;
+}
+
+.os-container {
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.os-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.os-btn-primary {
+  background: var(--primary-container);
+  color: var(--on-primary);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  padding: 8px 24px;
+  border-radius: 0.25rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.os-btn-primary:hover {
+  box-shadow: 0 4px 12px rgba(0, 82, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.os-btn-secondary {
+  background: var(--surface);
+  color: var(--secondary);
+  border: 1px solid var(--border);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  padding: 8px 24px;
+  border-radius: 0.25rem;
+  transition: background 0.2s;
+}
+
+.os-btn-secondary:hover {
+  background: var(--surface-bright);
+}

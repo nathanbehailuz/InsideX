@@ -109,6 +109,8 @@ class InsiderTradingDB:
             return 0
         
         df_clean = self.clean_data(df)
+        if df_clean.empty:
+            return 0
         
         with sqlite3.connect(self.db_path) as conn:
             try:
@@ -116,9 +118,21 @@ class InsiderTradingDB:
                 temp_table = 'temp_insider_trades'
                 df_clean.to_sql(temp_table, conn, if_exists='replace', index=False)
                 
-                # Insert from temp table using INSERT OR IGNORE
-                # Explicitly specify columns to avoid column count mismatch
                 cursor = conn.cursor()
+                # Remove rows already present on stable keys. Needed because
+                # SQLite UNIQUE treats NULLs as distinct (performance_* cols).
+                cursor.execute(f'''
+                    DELETE FROM {temp_table}
+                    WHERE EXISTS (
+                        SELECT 1 FROM insider_trades i
+                        WHERE i.ticker = {temp_table}.ticker
+                          AND i.trade_date = {temp_table}.trade_date
+                          AND i.insider_name = {temp_table}.insider_name
+                          AND i.trade_type = {temp_table}.trade_type
+                          AND i.qty IS {temp_table}.qty
+                    )
+                ''')
+
                 cursor.execute(f'''
                     INSERT OR IGNORE INTO insider_trades 
                     (trade_flag, filing_date, trade_date, ticker, company_name, insider_name, title, trade_type, price, qty, owned, delta_own, value, performance_1d, performance_1w, performance_1m, performance_6m)
@@ -128,11 +142,6 @@ class InsiderTradingDB:
                 
                 # Get the number of actually inserted rows
                 inserted_count = cursor.rowcount
-                
-                # Log duplicates if any
-                skipped_count = len(df_clean) - inserted_count
-                if skipped_count > 0:
-                    logging.info(f"Skipped {skipped_count} duplicate records")
                 
                 # Drop the temporary table
                 cursor.execute(f'DROP TABLE {temp_table}')
@@ -238,38 +247,43 @@ class InsiderTradingDB:
             return pd.read_sql_query(query, conn, params=[ticker])
     
     def check_if_exists(self, row):
-        """Check if a specific trade record already exists in the database"""
+        """
+        Check if a trade already exists using stable identity fields.
+        Avoids nullable performance_* columns — SQLite UNIQUE treats NULLs as
+        distinct, so those fields cannot be used for reliable dedupe.
+        """
+        df = pd.DataFrame([row]) if not isinstance(row, pd.DataFrame) else row
+        cleaned = self.clean_data(df)
+        if cleaned.empty:
+            return False
+        r = cleaned.iloc[0]
+
+        def _param(col):
+            v = r.get(col)
+            if v is None or (isinstance(v, float) and pd.isna(v)):
+                return None
+            if isinstance(v, str) and v.strip().lower() in ('', 'nan', 'none'):
+                return None
+            return v
+
+        ticker = _param('ticker')
+        trade_date = _param('trade_date')
+        insider = _param('insider_name')
+        trade_type = _param('trade_type')
+        qty = _param('qty')
+        if not all([ticker, trade_date, insider, trade_type]):
+            return False
+
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            
-            # Check using all fields from the unique constraint
+            # qty alone + identity is enough; avoid float price equality issues
             query = '''
-                SELECT COUNT(*) FROM insider_trades 
-                WHERE trade_flag = ? AND filing_date = ? AND trade_date = ? AND ticker = ? 
-                AND company_name = ? AND insider_name = ? AND title = ? AND trade_type = ? 
-                AND price = ? AND qty = ? AND owned = ? AND delta_own = ? AND value = ? 
-                AND performance_1d = ? AND performance_1w = ? AND performance_1m = ? AND performance_6m = ?
+                SELECT COUNT(*) FROM insider_trades
+                WHERE ticker = ?
+                  AND trade_date = ?
+                  AND insider_name = ?
+                  AND trade_type = ?
+                  AND qty IS ?
             '''
-            
-            params = (
-                str(row.get('X', '')),
-                str(row.get('Filing Date', '')),
-                str(row.get('Trade Date', '')),
-                str(row.get('Ticker', '')),
-                str(row.get('Company Name', '')),
-                str(row.get('Insider Name', '')),
-                str(row.get('Title', '')),
-                str(row.get('Trade Type', '')),
-                row.get('Price', 0),
-                row.get('Qty', 0),
-                row.get('Owned', 0),
-                row.get('ΔOwn', 0),
-                row.get('Value', 0),
-                row.get('1d', 0),
-                row.get('1w', 0),
-                row.get('1m', 0),
-                row.get('6m', 0)
-            )
-            
-            cursor.execute(query, params)
+            cursor.execute(query, (ticker, trade_date, insider, trade_type, qty))
             return cursor.fetchone()[0] > 0

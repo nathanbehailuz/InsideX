@@ -9,7 +9,11 @@ lxml==6.0.2
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
 pydantic==2.5.0
+pydantic-settings==2.1.0
 python-multipart==0.0.6
+
+# Modal deploy (modal_app.py); also needed for `modal deploy` / `modal run` CLI
+modal>=0.73.0
 
 # ML dependencies
 scikit-learn>=1.5.0

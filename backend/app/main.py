@@ -1,5 +1,5 @@
 """
-FastAPI application entry point for InsideX
+FastAPI application entry point for OpenSignal
 """
 
 from fastapi import FastAPI
@@ -14,18 +14,28 @@ from backend.app.core.config import settings
 
 # Create FastAPI instance
 app = FastAPI(
-    title="InsideX API",
-    description="API for insider trading signals and data analysis",
+    title="OpenSignal API",
+    description=(
+        "API for market signals from financial disclosures and transactions "
+        "by influential decision-makers"
+    ),
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
 )
 
-# Configure CORS
+# Configure CORS (ALLOWED_HOSTS / ALLOWED_ORIGIN_REGEX from env for Vercel)
+_cors_origins = settings.ALLOWED_HOSTS
+_allow_credentials = True
+if _cors_origins == ["*"]:
+    # Browsers reject allow_credentials with wildcard origin
+    _allow_credentials = False
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_HOSTS,
-    allow_credentials=True,
+    allow_origins=_cors_origins,
+    allow_origin_regex=settings.ALLOWED_ORIGIN_REGEX,
+    allow_credentials=_allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -46,7 +56,7 @@ app.include_router(signals_router, prefix="/api/v1", tags=["signals"])
 async def read_root():
     """Root endpoint"""
     return {
-        "message": "Welcome to InsideX API", 
+        "message": "Welcome to OpenSignal API", 
         "docs": "/docs",
         "health": "/healthz"
     }

@@ -12,7 +12,8 @@ import logging
 import os
 
 URL = "http://openinsider.com"
-DB_PATH = 'insider_trading.db'
+# Override with DATABASE_PATH (e.g. /data/insider_trading.db on Modal Volume)
+DB_PATH = os.getenv("DATABASE_PATH", "insider_trading.db")
 
 warnings.filterwarnings("ignore")
 
@@ -94,6 +95,10 @@ def scraper(s_type):
                         if new_records:
                             new_df = pd.DataFrame(new_records)
                             inserted_count = db.insert_data(new_df)
+                            # If nothing new survived dedupe, we've caught up
+                            if inserted_count == 0:
+                                logging.info(f"No new records on page {page}; update complete")
+                                break
                         else:
                             break
                     logging.info(f"Inserted {inserted_count} new records from page {page}")

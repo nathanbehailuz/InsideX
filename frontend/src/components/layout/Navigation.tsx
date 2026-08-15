@@ -1,105 +1,80 @@
 /**
- * Main navigation component
+ * OpenSignal top navigation — brand + app links only (no account chrome)
  */
 
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { 
-  HomeIcon, 
-  TrendingUpIcon, 
-  BuildingIcon, 
-  UsersIcon, 
-  ActivityIcon 
-} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
-  { name: 'Signals', href: '/signals', icon: TrendingUpIcon },
-  { name: 'Companies', href: '/companies', icon: BuildingIcon },
-  { name: 'Insiders', href: '/insiders', icon: UsersIcon },
-  { name: 'Trades', href: '/trades', icon: ActivityIcon },
+  { name: 'Dashboard', href: '/dashboard' },
+  { name: 'Signals', href: '/signals' },
+  { name: 'Companies', href: '/companies' },
+  { name: 'People', href: '/insiders' },
+  { name: 'Trades', href: '/trades' },
 ];
 
 export function Navigation() {
   const pathname = usePathname();
 
   return (
-    <nav className="bg-white shadow">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex">
-            {/* Logo */}
-            <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">IX</span>
-                </div>
-                <span className="text-xl font-bold text-gray-900">InsideX</span>
-              </Link>
-            </div>
+    <nav className="bg-surface border-b border-border shadow-sm fixed top-0 w-full z-50">
+      <div className="os-container flex items-center gap-8 h-16">
+        <Link href="/" className="flex items-center gap-2 shrink-0">
+          <Image
+            src="/opensignal-logo.png"
+            alt="OpenSignal"
+            width={32}
+            height={32}
+            className="h-8 w-8 rounded-md object-cover"
+            priority
+          />
+          <span className="text-xl font-bold text-primary tracking-tight">
+            OpenSignal
+          </span>
+        </Link>
 
-            {/* Main Navigation */}
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              {navigation.map((item) => {
-                const Icon = item.icon;
-                const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
-                
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={cn(
-                      'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200',
-                      isActive
-                        ? 'border-blue-500 text-gray-900'
-                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-                    )}
-                  >
-                    <Icon className="h-4 w-4 mr-2" />
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="sm:hidden flex items-center">
-            <button
-              type="button"
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
-            >
-              <span className="sr-only">Open main menu</span>
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Navigation */}
-      <div className="sm:hidden">
-        <div className="pt-2 pb-3 space-y-1">
+        <div className="hidden md:flex items-center gap-6 h-16">
           {navigation.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
-            
+            const isActive =
+              pathname === item.href || pathname.startsWith(item.href + '/');
             return (
               <Link
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  'flex items-center pl-3 pr-4 py-2 border-l-4 text-base font-medium',
+                  'text-xs font-semibold tracking-wider uppercase h-full flex items-center border-b-2 transition-colors',
                   isActive
-                    ? 'bg-blue-50 border-blue-500 text-blue-700'
-                    : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
+                    ? 'text-primary border-primary'
+                    : 'text-secondary border-transparent hover:text-primary'
                 )}
               >
-                <Icon className="h-5 w-5 mr-3" />
+                {item.name}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="md:hidden border-t border-border overflow-x-auto">
+        <div className="flex gap-1 px-4 py-2">
+          {navigation.map((item) => {
+            const isActive =
+              pathname === item.href || pathname.startsWith(item.href + '/');
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={cn(
+                  'whitespace-nowrap px-3 py-1.5 rounded text-xs font-semibold tracking-wider uppercase',
+                  isActive
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-secondary hover:text-primary'
+                )}
+              >
                 {item.name}
               </Link>
             );
@@ -110,54 +85,38 @@ export function Navigation() {
   );
 }
 
-interface BreadcrumbItem {
-  name: string;
-  href?: string;
-}
-
-interface BreadcrumbsProps {
-  items: BreadcrumbItem[];
-  className?: string;
-}
-
-export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
+export function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <nav className={cn('flex', className)} aria-label="Breadcrumb">
-      <ol className="flex items-center space-x-1 text-sm text-gray-500">
-        <li>
-          <Link href="/dashboard" className="hover:text-gray-700">
-            <HomeIcon className="h-4 w-4" />
-          </Link>
-        </li>
-        {items.map((item, index) => (
-          <li key={item.name} className="flex items-center">
-            <svg
-              className="flex-shrink-0 h-4 w-4 text-gray-400 mx-1"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-            {item.href ? (
-              <Link 
-                href={item.href}
-                className={cn(
-                  'hover:text-gray-700',
-                  index === items.length - 1 ? 'text-gray-900 font-medium' : 'text-gray-500'
-                )}
-              >
-                {item.name}
-              </Link>
-            ) : (
-              <span className="text-gray-900 font-medium">{item.name}</span>
-            )}
-          </li>
-        ))}
-      </ol>
-    </nav>
+    <div className="min-h-screen bg-background flex flex-col">
+      <Navigation />
+      <main className="flex-grow pt-20 md:pt-24 pb-12 os-container w-full relative z-10">
+        {children}
+      </main>
+      <SiteFooter />
+    </div>
+  );
+}
+
+export function SiteFooter() {
+  return (
+    <footer className="border-t border-border bg-surface mt-auto">
+      <div className="os-container py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm text-secondary">
+        <p>
+          <span className="font-semibold text-primary">OpenSignal</span>
+          {' '}© 2026. Data from public financial disclosures. Not investment advice.
+        </p>
+        <p>
+          Made by{' '}
+          <a
+            href="https://nathanbehailu.vercel.app/projects.html#insidex"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-primary hover:underline"
+          >
+            Nathan
+          </a>
+        </p>
+      </div>
+    </footer>
   );
 }

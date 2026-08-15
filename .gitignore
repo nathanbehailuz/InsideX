@@ -14,7 +14,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+/lib/
 lib64/
 parts/
 sdist/
@@ -103,6 +103,9 @@ coverage.xml
 .dmypy.json
 dmypy.json
 
+# Stitch design exports (local)
+stitch-exports/
+
 # Scraping data
 scraped_data/
 data/
@@ -110,6 +113,8 @@ data/
 *.json
 !package.json
 !package-lock.json
+!frontend/tsconfig.json
+!tsconfig.json
 
 # Environment variables
 .env

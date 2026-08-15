@@ -14,6 +14,15 @@ from backend.app.ml.features import FeatureEngineer
 from backend.app.models.signal import Signal, SignalResponse, TopSignalsResponse
 from database import InsiderTradingDB
 
+
+def _is_buy_trade(trade_type) -> bool:
+    """OpenInsider uses 'P - Purchase' / 'S - Sale'; also accept legacy Buy/Sell."""
+    t = str(trade_type or "").strip().lower()
+    if not t or t == "nan":
+        return False
+    return t in ("buy", "p - purchase") or t.startswith("p -") or "purchase" in t
+
+
 class SignalService:
     """Service for generating ML-based trading signals"""
     
@@ -75,7 +84,7 @@ class SignalService:
             )
         
         # Filter for buy trades only (main signal source)
-        buy_trades = recent_trades[recent_trades['trade_type'] == 'Buy'].copy()
+        buy_trades = recent_trades[recent_trades['trade_type'].map(_is_buy_trade)].copy()
         
         if buy_trades.empty:
             return TopSignalsResponse(
@@ -119,7 +128,7 @@ class SignalService:
             return []
         
         # Filter for buy trades
-        buy_trades = ticker_trades[ticker_trades['trade_type'] == 'Buy'].copy()
+        buy_trades = ticker_trades[ticker_trades['trade_type'].map(_is_buy_trade)].copy()
         
         if buy_trades.empty:
             return []

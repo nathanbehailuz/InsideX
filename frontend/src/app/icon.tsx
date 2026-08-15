@@ -28,7 +28,7 @@ export default function Icon() {
           fontWeight: 'bold',
         }}
       >
-        IX
+        OS
       </div>
     ),
     {

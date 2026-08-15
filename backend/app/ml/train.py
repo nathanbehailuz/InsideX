@@ -26,7 +26,7 @@ class MLTrainer:
     def __init__(self, db_path: str, artifacts_dir: str = "app/ml/artifacts"):
         self.db_path = db_path
         self.artifacts_dir = Path(artifacts_dir)
-        self.artifacts_dir.mkdir(exist_ok=True)
+        self.artifacts_dir.mkdir(parents=True, exist_ok=True)
         
         self.feature_engineer = FeatureEngineer(db_path)
         self.model = None
@@ -43,7 +43,11 @@ class MLTrainer:
                 FROM insider_trades
                 WHERE trade_date IS NOT NULL 
                   AND ticker IS NOT NULL
-                  AND trade_type IN ('Buy', 'Sell')
+                  AND (
+                    trade_type IN ('Buy', 'Sell', 'P - Purchase', 'S - Sale')
+                    OR trade_type LIKE 'P -%'
+                    OR trade_type LIKE 'S -%'
+                  )
                 ORDER BY trade_date DESC
             """
             

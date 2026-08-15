@@ -160,8 +160,15 @@ class TradeService:
         
         # Calculate summary statistics
         total_trades = len(insider_trades_df)
-        total_bought = insider_trades_df[insider_trades_df['trade_type'] == 'Buy']['qty'].sum() if 'qty' in insider_trades_df.columns else 0
-        total_sold = insider_trades_df[insider_trades_df['trade_type'] == 'Sell']['qty'].sum() if 'qty' in insider_trades_df.columns else 0
+        trade_types = (
+            insider_trades_df['trade_type'].astype(str).str.lower()
+            if 'trade_type' in insider_trades_df.columns
+            else pd.Series(dtype=str)
+        )
+        is_buy = trade_types.str.contains('purchase', na=False) | (trade_types == 'buy') | trade_types.str.startswith('p -')
+        is_sell = trade_types.str.contains('sale', na=False) | (trade_types == 'sell') | trade_types.str.startswith('s -')
+        total_bought = insider_trades_df.loc[is_buy, 'qty'].sum() if 'qty' in insider_trades_df.columns else 0
+        total_sold = insider_trades_df.loc[is_sell, 'qty'].sum() if 'qty' in insider_trades_df.columns else 0
         total_companies = insider_trades_df['ticker'].nunique() if 'ticker' in insider_trades_df.columns else 0
         
         avg_trade_value = None
